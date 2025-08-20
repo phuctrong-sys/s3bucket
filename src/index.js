@@ -4,3 +4,4 @@
  */
 
 /* @ts-self-types="./index.d.ts" */
+export * from "./s3bucket.js";

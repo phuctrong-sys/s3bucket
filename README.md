@@ -1,4 +1,4 @@
-# Replace me
+# S3Bucket
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,17 +6,64 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-TODO
+Lightweight JavaScript helper for making signed S3 requests using aws4fetch. Provides a
+small `S3Bucket` class with convenience methods for common object operations
+(`head`, `get`, `put`, `delete`).
 
 ## Installation
 
-```shell
-npm install @humanwhocodes/replace-me
+Install from npm:
+
+```bash
+npm install @humanwhocodes/s3bucket
 ```
 
 ## Usage
 
-TODO
+Import and create an `S3Bucket` instance. The constructor requires a
+`baseUrl` and `bucket` and accepts AWS credentials or the usual
+environment-based mechanisms.
+
+```js
+import { S3Bucket } from "@humanwhocodes/s3bucket";
+
+const s3 = new S3Bucket({
+	baseUrl: "https://s3.amazonaws.com",
+	bucket: "my-bucket",
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+	region: "us-east-1", // optional
+	pathStyle: true, // optional
+});
+
+// Head an object
+await s3.head("path/to/object.txt");
+
+// Get object
+const res = await s3.get("path/to/object.txt");
+const body = await res.text();
+
+// Put object
+await s3.put("path/to/new.txt", "hello world", {
+	headers: { "Content-Type": "text/plain" },
+});
+
+// Delete object
+await s3.delete("path/to/new.txt");
+```
+
+Constructor options (partial):
+
+- `baseUrl` (string, required): Base endpoint used to build request URLs.
+- `bucket` (string, required): Bucket name.
+- `pathStyle` (boolean, optional, default false): When true use
+  path-style URLs (`baseUrl/<bucket>/<path>`), otherwise use `baseUrl/<path>`.
+- `accessKeyId`, `secretAccessKey`, `sessionToken`, `region` — forwarded to
+  `aws4fetch`.
+
+## Acknowledgements
+
+This library is built on top of the excellent [aws4fetch](https://npmjs.com/package/aws4fetch) package.
 
 ## License
 

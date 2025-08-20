@@ -15,5 +15,11 @@
 			matchDatasources: ["npm"],
 			minimumReleaseAge: "30 days",
 		},
+
+		// don't update dev dependencies ever
+		{
+			matchDepTypes: ["devDependencies"],
+			enabled: false,
+		},
 	],
 }

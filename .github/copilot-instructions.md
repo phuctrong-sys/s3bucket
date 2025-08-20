@@ -34,3 +34,10 @@ This project is a Node.js library .
 - Run `npx mocha <filename>` to execute tests for specific files; always do this until all tests pass for this file.
 - Run `npm test` to run all tests
 - Do not change the working directory when running tests
+
+## Process to Make Changes
+
+1. Understand the existing code and tests
+2. Make small, incremental changes
+3. Run tests to ensure changes work as expected
+4. Ensure code adheres to style guidelines
