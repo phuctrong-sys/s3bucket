@@ -39,6 +39,7 @@ describe("S3Bucket (ESM)", function () {
 					baseUrl: "https://s3.example.com",
 					accessKeyId: "a",
 					secretAccessKey: "b",
+					pathStyle: true,
 				}),
 			{
 				name: "TypeError",

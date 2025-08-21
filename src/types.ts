@@ -50,9 +50,10 @@ export type S3BucketOptions = {
 	initRetryMs?: number;
 
 	/**
-	 * The name of the S3 bucket to use.
+	 * The name of the S3 bucket to use. Only required when `pathStyle` is true.
+	 * If `pathStyle` is false, the bucket name is assumed to be part of `baseUrl`.
 	 */
-	bucket: string;
+	bucket?: string;
 
 	/**
 	 * The base URL for the S3 service. Basically, the full protocol and domain.

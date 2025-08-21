@@ -55,3 +55,19 @@ if (condition) {
 
 callFunction();
 ```
+
+## Comments
+
+Use single-line comments for brief explanations and multi-line comments for longer descriptions. Always start comments with a capital letter. Example:
+
+```typescript
+// Incorrect
+// this is a brief comment
+// this is a longer comment that explains something in detail
+
+// Correct
+// This is a brief comment
+/*
+ * This is a longer comment that explains something in detail.
+ */
+```

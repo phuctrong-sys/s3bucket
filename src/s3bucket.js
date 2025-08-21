@@ -64,11 +64,23 @@ export class S3Bucket {
 		this.#baseUrl = baseUrl.replace(/\/+$/, ""); // remove trailing slash
 		this.#pathStyle = Boolean(pathStyle);
 
-		if (!bucket || typeof bucket !== "string") {
-			throw new TypeError("Expected a bucket string.");
+		/*
+		 * Bucket is only required when using path-style addressing because the
+		 * bucket name is included in the request path. For virtual-hosted style
+		 * the bucket is assumed to be part of the hostname and therefore optional.
+		 */
+		if (this.#pathStyle) {
+			if (!bucket || typeof bucket !== "string") {
+				throw new TypeError("Expected a bucket string.");
+			}
+			this.#bucket = bucket;
+		} else {
+			/*
+			 * Not path-style: bucket is optional. Store empty string when not
+			 * provided to keep the private field a string.
+			 */
+			this.#bucket = bucket || "";
 		}
-
-		this.#bucket = bucket;
 
 		this.#aws = new AwsClient({
 			accessKeyId,
