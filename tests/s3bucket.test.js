@@ -28,7 +28,22 @@ describe("S3Bucket (ESM)", function () {
 				}),
 			{
 				name: "TypeError",
-				message: "Expected a baseUrl string.",
+				message: "Expected a baseUrl.",
+			},
+		);
+
+		// baseUrl not a string or URL
+		assert.throws(
+			() =>
+				new S3Bucket({
+					bucket: BUCKET,
+					baseUrl: 123,
+					accessKeyId: "a",
+					secretAccessKey: "b",
+				}),
+			{
+				name: "TypeError",
+				message: "Expected a baseUrl string or URL object.",
 			},
 		);
 
@@ -54,7 +69,9 @@ describe("S3Bucket (ESM)", function () {
 		const mocker = new FetchMocker({ servers: [server] });
 		mocker.mockGlobal();
 
-		const s3 = new S3Bucket(Object.assign({}, OPTIONS, { baseUrl: base }));
+		const s3 = new S3Bucket(
+			Object.assign({}, OPTIONS, { baseUrl: new URL(base) }),
+		);
 		server.head("/some/key", 200);
 
 		const res = await s3.head("/some/key");
@@ -92,7 +109,7 @@ describe("S3Bucket (ESM)", function () {
 	});
 
 	it("sends GET request for get()", async function () {
-		const base = `https://${BUCKET}.s3.amazonaws.com`;
+		const base = `https://${BUCKET}.s3.amazonaws.com/`;
 		const server = new MockServer(base);
 		const mocker = new FetchMocker({ servers: [server] });
 		mocker.mockGlobal();
@@ -105,7 +122,7 @@ describe("S3Bucket (ESM)", function () {
 		const text = await res.text();
 		assert.equal(text, "hello");
 
-		assert.equal(mocker.called(`${base}/readme.txt`), true);
+		assert.equal(mocker.called(`${base}readme.txt`), true);
 
 		mocker.unmockGlobal();
 		server.clear();
@@ -117,7 +134,9 @@ describe("S3Bucket (ESM)", function () {
 		const mocker = new FetchMocker({ servers: [server] });
 		mocker.mockGlobal();
 
-		const s3 = new S3Bucket(Object.assign({}, OPTIONS, { baseUrl: base }));
+		const s3 = new S3Bucket(
+			Object.assign({}, OPTIONS, { baseUrl: new URL(base) }),
+		);
 		const payload = "abc123";
 		// create a route that matches the request body and headers
 		server.put(

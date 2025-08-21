@@ -25,7 +25,7 @@ export class S3Bucket {
 
 	/**
 	 * The base URL to use for requests.
-	 * @type {string}
+	 * @type {URL}
 	 */
 	#baseUrl;
 
@@ -37,7 +37,7 @@ export class S3Bucket {
 
 	/**
 	 * Create an S3Bucket helper.
-	 * @param {S3BucketOptions} options Options for the S3Bucket (see src/types.ts:S3BucketOptions)
+	 * @param {S3BucketOptions} options Options for the S3Bucket
 	 */
 	constructor(options) {
 		if (!options || typeof options !== "object") {
@@ -57,11 +57,16 @@ export class S3Bucket {
 			initRetryMs,
 		} = options;
 
-		if (!baseUrl || typeof baseUrl !== "string") {
-			throw new TypeError("Expected a baseUrl string.");
+		if (!baseUrl) {
+			throw new TypeError("Expected a baseUrl.");
 		}
 
-		this.#baseUrl = baseUrl.replace(/\/+$/, ""); // remove trailing slash
+		if (typeof baseUrl !== "string" && !(baseUrl instanceof URL)) {
+			throw new TypeError("Expected a baseUrl string or URL object.");
+		}
+
+		this.#baseUrl =
+			typeof baseUrl === "string" ? new URL(baseUrl) : baseUrl;
 		this.#pathStyle = Boolean(pathStyle);
 
 		/*
@@ -100,20 +105,16 @@ export class S3Bucket {
 	 * @returns {string} Fully-qualified S3 URL
 	 */
 	#urlFor(path) {
-		let p = path || "";
-		if (p.startsWith("/")) {
-			p = p.slice(1);
-		}
-
-		const baseUrl = this.#baseUrl.replace(/\/+$/, ""); // ensure no trailing slash
-
 		if (this.#pathStyle) {
 			// path-style: baseUrl/<bucket>/<path>
-			return `${baseUrl}/${encodeURIComponent(this.#bucket)}/${encodeURI(p)}`;
+			return new URL(
+				`${encodeURIComponent(this.#bucket)}/${encodeURI(path)}`,
+				this.#baseUrl,
+			).href;
 		}
 
 		// virtual-hosted style (default): baseUrl/<path>
-		return `${baseUrl}/${encodeURI(p)}`;
+		return new URL(encodeURI(path), this.#baseUrl).href;
 	}
 
 	/**

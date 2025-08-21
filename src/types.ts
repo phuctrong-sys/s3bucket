@@ -60,7 +60,7 @@ export type S3BucketOptions = {
 	 * For example, "https://s3.amazonaws.com" or "https://s3.us-west-2.amazonaws.com".
 	 * This is used to construct the full URL for S3 requests.
 	 */
-	baseUrl: string;
+	baseUrl: string | URL;
 
 	/**
 	 * Whether to use path-style addressing.
